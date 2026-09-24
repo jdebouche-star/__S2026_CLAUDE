@@ -1,0 +1,6 @@
+# runtime data created by dx_spot_map.py
+dxspotmap_cache.sqlite*
+cty.dat
+world_countries.geojson
+*.tmp
+__pycache__/
