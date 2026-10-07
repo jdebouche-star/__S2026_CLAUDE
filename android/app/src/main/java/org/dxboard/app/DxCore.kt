@@ -158,7 +158,7 @@ class CtyDatabase {
     val size get() = prefixes.size
 
     fun load(text: String): Int {
-        val overrides = Regex("\\(.*?\\)|\\[.*?]|<.*?>|\\{.*?}|~.*?~")
+        val overrides = Regex("\\(.*?\\)|\\[.*?\\]|<.*?>|\\{.*?\\}|~.*?~")  // ] and } escaped: Android's ICU regex needs it
         for (record in text.split(";")) {
             val fields = record.split(":")
             if (fields.size < 9) continue

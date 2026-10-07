@@ -361,7 +361,12 @@ class BoardViewModel(app: Application) : AndroidViewModel(app) {
                     }
                 }
             }
-            if (file.exists()) CtyDatabase().also { it.load(file.readText(Charsets.ISO_8859_1)) } else null
+            try {
+                if (file.exists()) CtyDatabase().also { it.load(file.readText(Charsets.ISO_8859_1)) } else null
+            } catch (e: Exception) {
+                listener.onLog("cty.dat could not be read: ${e.message}", true)
+                null
+            }
         }
         if (db != null && db.size > 0) {
             cty = db
