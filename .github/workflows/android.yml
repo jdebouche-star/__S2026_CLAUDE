@@ -92,8 +92,8 @@ jobs:
             adb shell monkey -p org.dxboard.app --pct-syskeys 0 --throttle 120 -v 600 > monkey.txt 2>&1 || true
             sleep 3
             adb exec-out screencap -p > 3-after-monkey.png
-            adb logcat -d > logcat.txt
-            adb shell am force-stop org.dxboard.app
+            adb logcat -d -b crash > logcat.txt || true
+            adb shell am force-stop org.dxboard.app || true
             adb shell am start -n org.dxboard.app/.MainActivity --ez crashtest true
             sleep 6
             adb shell am start -W -n org.dxboard.app/.MainActivity
@@ -107,9 +107,10 @@ jobs:
         run: |
           echo "--- app log ---"; head -40 app-log.txt || true
           echo "--- monkey ---"; tail -5 monkey.txt || true
+          if grep -q "// CRASH" monkey.txt; then grep -A 30 "// CRASH" monkey.txt; echo "::error::Crash during random taps"; exit 1; fi
           grep -n -A 40 "FATAL EXCEPTION" logcat.txt | head -150 || true
           if grep -q "FATAL EXCEPTION" logcat.txt; then echo "::error::The app crashed"; exit 1; fi
-          if [ "$(cat crashscreen.txt)" = "0" ]; then echo "::error::Crash report screen did not show"; exit 1; fi
+          if [ "$(cat crashscreen.txt 2>/dev/null || echo 0)" = "0" ]; then echo "::error::Crash report screen did not show"; exit 1; fi
           echo "OK: no crash, crash report screen works"
 
       - uses: actions/upload-artifact@v4
