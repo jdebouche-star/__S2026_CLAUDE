@@ -33,11 +33,14 @@ jobs:
         run: |
           ./gradlew --no-daemon assembleRelease
           cp app/build/outputs/apk/release/app-release.apk DXClusterBoard.apk
+          cp hello/build/outputs/apk/release/hello-release.apk DXTest.apk
 
       - uses: actions/upload-artifact@v4
         with:
           name: DXClusterBoard-apk
-          path: android/DXClusterBoard.apk
+          path: |
+            android/DXClusterBoard.apk
+            android/DXTest.apk
 
       - name: Publish to the "android-latest" release
         uses: softprops/action-gh-release@v2
@@ -46,10 +49,13 @@ jobs:
           name: DX Cluster Board for Android (latest build)
           target_commitish: ${{ github.sha }}
           prerelease: true
-          files: android/DXClusterBoard.apk
+          files: |
+            android/DXClusterBoard.apk
+            android/DXTest.apk
           body: |
             Version 1.0.${{ github.run_number }} of DX Cluster Board for Android (commit ${{ github.sha }}).
             You can check the installed version at the bottom of the Clusters page.
+            DXTest.apk is a tiny test app (a seconds counter) used to check whether the phone lets sideloaded apps run.
             Open this page on your phone, tap DXClusterBoard.apk and install it.
 
   # Start the app on emulators, run the demo, tap around at random,

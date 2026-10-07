@@ -13,4 +13,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "DXClusterBoard"
-include(":app")
+include(":app", ":hello")

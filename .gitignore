@@ -11,3 +11,5 @@ android/build/
 android/app/build/
 android/local.properties
 android/DXClusterBoard.apk
+android/DXTest.apk
+android/hello/build/
