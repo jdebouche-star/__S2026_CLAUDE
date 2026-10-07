@@ -98,6 +98,13 @@ object Diagnostics {
         return describe(bad, true)
     }
 
+    /** The newest abnormal exit (crash, ANR, kill, ...) with ANR trace, whether seen or not. */
+    fun latestAbnormalExit(ctx: Context): String? {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return null
+        val bad = exits(ctx, 8).firstOrNull { it.reason in ABNORMAL } ?: return null
+        return describe(bad, true)
+    }
+
     /** Everything useful in one text, for the Share button. */
     fun report(ctx: Context, crash: String?, exit: String?): String = buildString {
         append("DX Cluster Board ${BuildConfig.VERSION_NAME} · Android ${Build.VERSION.RELEASE} ")

@@ -110,7 +110,12 @@ class BoardViewModel(app: Application) : AndroidViewModel(app) {
         log("Welcome! Enter your call on the Clusters page and press Connect.")
         viewModelScope.launch { pumpEvents() }
         viewModelScope.launch { purgeLoop() }
-        viewModelScope.launch { loadCty() }
+        if (prefs.getBoolean("safeMode", false)) {
+            log("Safe start: the country list is not loaded.")
+            Diagnostics.breadcrumb(app, "Safe start (no country list)")
+        } else {
+            viewModelScope.launch { loadCty() }
+        }
     }
 
     // ---------------------------------------------------------------- events

@@ -100,7 +100,13 @@ jobs:
             sleep 6
             adb exec-out screencap -p > 4-crash-report.png
             adb shell dumpsys activity activities | grep -c "org.dxboard.app/.CrashActivity" > crashscreen.txt || true
+            adb shell am force-stop org.dxboard.app || true
+            adb shell am start -W -n org.dxboard.app/.ReportActivity
+            sleep 4
+            adb exec-out screencap -p > 5-report.png
+            adb shell dumpsys activity activities | grep -c "org.dxboard.app/.ReportActivity" > reportscreen.txt || true
             adb logcat -d -s DxBoard > app-log.txt || true
+            adb logcat -d -b crash > logcat-end.txt || true
 
       - name: Check results
         if: always()
@@ -111,7 +117,10 @@ jobs:
           grep -n -A 40 "FATAL EXCEPTION" logcat.txt | head -150 || true
           if grep -q "FATAL EXCEPTION" logcat.txt; then echo "::error::The app crashed"; exit 1; fi
           if [ "$(cat crashscreen.txt 2>/dev/null || echo 0)" = "0" ]; then echo "::error::Crash report screen did not show"; exit 1; fi
-          echo "OK: no crash, crash report screen works"
+          if [ "$(cat reportscreen.txt 2>/dev/null || echo 0)" = "0" ]; then echo "::error::Report screen did not show"; exit 1; fi
+          if grep -v "DX test crash" logcat-end.txt | grep -q "FATAL EXCEPTION.*" && [ "$(grep -c 'FATAL EXCEPTION' logcat-end.txt)" -gt 1 ]; then
+            grep -A 30 "FATAL EXCEPTION" logcat-end.txt; echo "::error::Crash after the crash test"; exit 1; fi
+          echo "OK: no crash, crash report and report screens work"
 
       - uses: actions/upload-artifact@v4
         if: always()

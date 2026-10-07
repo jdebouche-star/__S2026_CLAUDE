@@ -21,6 +21,17 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ReportActivity"
+            android:exported="true"
+            android:label="DX Board Report"
+            android:taskAffinity="org.dxboard.app.report"
+            android:theme="@android:style/Theme.Material.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".CrashActivity"
             android:exported="false"
             android:theme="@android:style/Theme.Material.NoActionBar" />
