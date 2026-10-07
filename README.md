@@ -65,3 +65,44 @@ collects from several well-known DX clusters at the same time.
 Enter your callsign, tick the clusters and press **Connect**. Settings are
 saved in `dx_cluster_board.json`. To try the screen without internet, start it
 with `python dx_cluster_board.py --demo`, which shows made-up spots.
+
+---
+
+# DX Cluster Board for Android
+
+The `android/` folder holds an Android version of the DX Cluster Board, written
+in Kotlin with Jetpack Compose. It needs Android 8.0 or newer.
+
+## Install on your phone
+1. On the phone, open the repository on GitHub, go to **Releases**, then open
+   **DX Cluster Board for Android (latest build)**.
+2. Tap **DXClusterBoard.apk** to download it.
+3. Open the downloaded file. Android will ask you to allow installs from your
+   browser or file manager ("Install unknown apps"). Allow it, then tap **Install**.
+
+GitHub Actions (`.github/workflows/android.yml`) builds a new APK every time
+something in `android/` changes, and it replaces the file in that release.
+Newer builds install over the old one, and your settings are kept.
+
+## Use
+- **Clusters** tab: enter your callsign, switch the clusters you want on or
+  off, add your own (`host:port`), and set how many minutes spots are kept.
+  It also has *Keep screen on* and a *Demo mode* with made-up spots.
+- Press **Connect** at the top.
+- **Spots** tab: colourful cards with the band, frequency, DX call, mode,
+  country, spotters, a coloured dot for each cluster that reported the spot,
+  and the age of the spot. New spots glow.
+  - Tap a band or mode chip to show or hide it. Long-press a chip to show only
+    that one, and long-press it again to show all.
+  - Search by DX call or country.
+  - Tap a spot to open its QRZ.com page.
+- **Log** tab: connection messages.
+
+Spots arrive while the app is open. Android may stop the connections when the
+app has been in the background for a long time. *Keep screen on* helps when
+you use the phone as a DX display.
+
+## Build it yourself
+Open the `android/` folder in Android Studio, or run `./gradlew assembleRelease`.
+`app/debug.keystore` is a debug signing key, not a secret. It is in the repo so
+that every CI build can be installed over the previous one.
