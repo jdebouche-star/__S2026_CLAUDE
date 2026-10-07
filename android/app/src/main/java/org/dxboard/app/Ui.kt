@@ -511,6 +511,8 @@ fun ClustersScreen(vm: BoardViewModel) {
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFA77BFF), contentColor = Ink),
             ) { Text("+ Add cluster", fontWeight = FontWeight.Bold) }
+            Text("Version ${BuildConfig.VERSION_NAME}", color = Dim, fontSize = 11.sp,
+                modifier = Modifier.padding(top = 16.dp))
             Spacer(Modifier.height(24.dp))
         }
     }

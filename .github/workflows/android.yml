@@ -48,13 +48,19 @@ jobs:
           prerelease: true
           files: android/DXClusterBoard.apk
           body: |
-            Latest Android build of DX Cluster Board (commit ${{ github.sha }}).
+            Version 1.0.${{ github.run_number }} of DX Cluster Board for Android (commit ${{ github.sha }}).
+            You can check the installed version at the bottom of the Clusters page.
             Open this page on your phone, tap DXClusterBoard.apk and install it.
 
-  # Start the app on an emulator, run the demo, save logcat + screenshots.
+  # Start the app on emulators, run the demo, tap around at random,
+  # and check that the crash report screen works. Saves logcat + screenshots.
   emulator-smoke-test:
     needs: build
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        api-level: [34, 35]
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -66,10 +72,10 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: Run on emulator (Android 15)
+      - name: Run on emulator (API ${{ matrix.api-level }})
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 35
+          api-level: ${{ matrix.api-level }}
           target: google_apis
           arch: x86_64
           disable-animations: true
@@ -77,25 +83,39 @@ jobs:
             adb install -r DXClusterBoard.apk
             adb logcat -c
             adb shell am start -W -n org.dxboard.app/.MainActivity
-            sleep 12
+            sleep 15
             adb exec-out screencap -p > 1-start.png
             adb shell am force-stop org.dxboard.app
             adb shell am start -W -n org.dxboard.app/.MainActivity --ez demo true
-            sleep 25
+            sleep 20
             adb exec-out screencap -p > 2-demo-spots.png
-            adb shell pidof org.dxboard.app || echo "APP NOT RUNNING"
+            adb shell monkey -p org.dxboard.app --pct-syskeys 0 --throttle 120 -v 600 > monkey.txt 2>&1 || true
+            sleep 3
+            adb exec-out screencap -p > 3-after-monkey.png
             adb logcat -d > logcat.txt
+            adb shell am force-stop org.dxboard.app
+            adb shell am start -n org.dxboard.app/.MainActivity --ez crashtest true
+            sleep 6
+            adb shell am start -W -n org.dxboard.app/.MainActivity
+            sleep 6
+            adb exec-out screencap -p > 4-crash-report.png
+            adb shell dumpsys activity activities | grep -c "org.dxboard.app/.CrashActivity" > crashscreen.txt || true
+            adb logcat -d -s DxBoard > app-log.txt || true
 
-      - name: Show crashes
+      - name: Check results
         if: always()
         run: |
-          grep -n -A 40 "FATAL EXCEPTION\|AndroidRuntime" logcat.txt | head -150 || true
+          echo "--- app log ---"; head -40 app-log.txt || true
+          echo "--- monkey ---"; tail -5 monkey.txt || true
+          grep -n -A 40 "FATAL EXCEPTION" logcat.txt | head -150 || true
           if grep -q "FATAL EXCEPTION" logcat.txt; then echo "::error::The app crashed"; exit 1; fi
+          if [ "$(cat crashscreen.txt)" = "0" ]; then echo "::error::Crash report screen did not show"; exit 1; fi
+          echo "OK: no crash, crash report screen works"
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: emulator-results
+          name: emulator-results-api${{ matrix.api-level }}
           path: |
             *.png
-            logcat.txt
+            *.txt

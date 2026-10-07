@@ -105,6 +105,7 @@ class BoardViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     init {
+        log("DX Cluster Board ${BuildConfig.VERSION_NAME}")
         log("Welcome! Enter your call on the Clusters page and press Connect.")
         viewModelScope.launch { pumpEvents() }
         viewModelScope.launch { purgeLoop() }
@@ -171,6 +172,7 @@ class BoardViewModel(app: Application) : AndroidViewModel(app) {
     fun log(text: String, error: Boolean = false) {
         val line = (if (error) "⚠ " else "") + logTime.format(Date()) + "  " + text
         logs = (logs + line).takeLast(300)
+        android.util.Log.i("DxBoard", line)
     }
 
     // --------------------------------------------------------------- filters
