@@ -38,3 +38,30 @@ them yourself and put them in the same folder:
   (save it as `world_countries.geojson`)
 
 Note: the QRZ password is stored unencrypted in the local SQLite file.
+
+---
+
+# DX Cluster Board
+
+`dx_cluster_board.py` is a second single-file app (standard library only, it
+runs in Thonny too). It shows a colourful live **list** of DX spots that it
+collects from several well-known DX clusters at the same time.
+
+- Built-in list of clusters: VE7CC, W3LPL, NC7J, GB7DJK, DL9GTB, ON0DXK,
+  DXFun, HamQTH, RBN CW and RBN FT8. Tick the ones you want, or add your own
+  as `host:port` (the list is saved).
+- Spots from all clusters are merged. The same DX within 1 kHz is shown once,
+  with every spotter and a coloured dot for each cluster that reported it.
+- Every band and every mode has its own colour.
+- Band activity bars: click a bar to show or hide that band. Ctrl+click shows
+  only that band, and a second Ctrl+click shows all bands again.
+- Mode chips (CW, SSB, FT8, FT4, RTTY, DIGI) work the same way.
+- Search box for a DX call or a country (the country comes from `cty.dat`).
+- New spots glow, older spots fade, and spots are removed after *Keep (min)*.
+- Click a spot to open its QRZ.com page.
+- Each cluster has a status light (green = receiving, yellow = connecting,
+  red = error) and a spot counter.
+
+Enter your callsign, tick the clusters and press **Connect**. Settings are
+saved in `dx_cluster_board.json`. To try the screen without internet, start it
+with `python dx_cluster_board.py --demo`, which shows made-up spots.

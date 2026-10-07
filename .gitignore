@@ -4,3 +4,4 @@ cty.dat
 world_countries.geojson
 *.tmp
 __pycache__/
+dx_cluster_board.json
