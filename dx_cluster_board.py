@@ -436,8 +436,9 @@ class ClusterConnection(threading.Thread):
                 line = raw.decode("latin-1").strip("\r\x07 \t")
                 if not line:
                     continue
-                if line.startswith("DX de"):
-                    spot = parse_spot_line(line, self.rbn)
+                dx = line.find("DX de")       # a prompt may sit in front of it
+                if dx >= 0:
+                    spot = parse_spot_line(line[dx:], self.rbn)
                     if spot:
                         spots += 1
                         if spots == 1:

@@ -5,3 +5,9 @@ world_countries.geojson
 *.tmp
 __pycache__/
 dx_cluster_board.json
+# Android build output
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/DXClusterBoard.apk

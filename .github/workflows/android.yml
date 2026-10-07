@@ -1,0 +1,52 @@
+name: Android APK
+
+on:
+  push:
+    paths:
+      - "android/**"
+      - ".github/workflows/android.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Unit tests
+        run: ./gradlew --no-daemon testDebugUnitTest
+
+      - name: Build APK
+        run: |
+          ./gradlew --no-daemon assembleRelease
+          cp app/build/outputs/apk/release/app-release.apk DXClusterBoard.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DXClusterBoard-apk
+          path: android/DXClusterBoard.apk
+
+      - name: Publish to the "android-latest" release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: android-latest
+          name: DX Cluster Board for Android (latest build)
+          target_commitish: ${{ github.sha }}
+          prerelease: true
+          files: android/DXClusterBoard.apk
+          body: |
+            Latest Android build of DX Cluster Board (commit ${{ github.sha }}).
+            Open this page on your phone, tap DXClusterBoard.apk and install it.
