@@ -15,7 +15,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // A crash report from last time? Show it first (plain screen, no Compose).
+        Diagnostics.breadcrumb(this, "MainActivity onCreate (restored=${savedInstanceState != null})")
+        // A crash, or did Android close the app last time? Show the report first (plain screen).
+        val exit = if (savedInstanceState == null) Diagnostics.newAbnormalExit(this) else null
+        if (exit != null && CrashLog.read(this) == null) CrashLog.save(this, null, exit)
         if (CrashLog.read(this) != null) {
             startActivity(Intent(this, CrashActivity::class.java))
             finish()
@@ -41,5 +44,12 @@ class MainActivity : ComponentActivity() {
             }
             DxTheme { BoardApp(vm) }
         }
+    }
+
+    override fun onStart() { super.onStart(); Diagnostics.breadcrumb(this, "MainActivity onStart") }
+    override fun onStop() { super.onStop(); Diagnostics.breadcrumb(this, "MainActivity onStop") }
+    override fun onDestroy() {
+        Diagnostics.breadcrumb(this, "MainActivity onDestroy (finishing=$isFinishing, config change=$isChangingConfigurations)")
+        super.onDestroy()
     }
 }

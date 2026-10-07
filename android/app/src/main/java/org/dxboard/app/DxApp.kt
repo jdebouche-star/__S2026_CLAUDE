@@ -12,6 +12,7 @@ class DxApp : Application() {
     override fun onCreate() {
         super.onCreate()
         CrashLog.install(this)
+        Diagnostics.breadcrumb(this, "--- app process started (${BuildConfig.VERSION_NAME}) ---")
     }
 }
 
@@ -34,14 +35,18 @@ object CrashLog {
             try {
                 val sw = StringWriter()
                 e.printStackTrace(PrintWriter(sw))
-                file(app).writeText(
-                    "DX Cluster Board ${BuildConfig.VERSION_NAME} · Android ${Build.VERSION.RELEASE} " +
-                        "(API ${Build.VERSION.SDK_INT}) · ${Build.MANUFACTURER} ${Build.MODEL}\n" +
-                        "Thread: ${t.name}\n\n" + sw.toString().take(8000),
-                )
+                Diagnostics.breadcrumb(app, "CRASH in thread ${t.name}: $e")
+                save(app, "Thread: ${t.name}\n" + sw.toString().take(8000), null)
             } catch (_: Throwable) {
             }
             previous?.uncaughtException(t, e)
+        }
+    }
+
+    fun save(ctx: Context, crash: String?, exit: String?) {
+        try {
+            file(ctx).writeText(Diagnostics.report(ctx, crash, exit))
+        } catch (_: Throwable) {
         }
     }
 

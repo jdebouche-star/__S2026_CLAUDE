@@ -524,7 +524,20 @@ fun ClustersScreen(vm: BoardViewModel) {
 fun LogScreen(vm: BoardViewModel) {
     val state = rememberLazyListState()
     LaunchedEffect(vm.logs.size) { if (vm.logs.isNotEmpty()) state.scrollToItem(vm.logs.size - 1) }
+    val ctx = LocalContext.current
     LazyColumn(state = state, modifier = Modifier.fillMaxSize().padding(10.dp)) {
+        item {
+            Button(
+                onClick = {
+                    ctx.startActivity(Intent.createChooser(
+                        Intent(Intent.ACTION_SEND).setType("text/plain")
+                            .putExtra(Intent.EXTRA_SUBJECT, "DX Cluster Board diagnostics")
+                            .putExtra(Intent.EXTRA_TEXT, vm.diagnosticsReport()),
+                        "Share diagnostics"))
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4DA3FF), contentColor = Ink),
+            ) { Text("Share diagnostics", fontWeight = FontWeight.Bold) }
+        }
         items(vm.logs) { line ->
             Text(
                 line, fontFamily = FontFamily.Monospace, fontSize = 11.sp,

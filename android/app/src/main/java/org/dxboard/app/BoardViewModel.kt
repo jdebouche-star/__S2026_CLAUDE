@@ -105,6 +105,7 @@ class BoardViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     init {
+        Diagnostics.breadcrumb(app, "BoardViewModel created")
         log("DX Cluster Board ${BuildConfig.VERSION_NAME}")
         log("Welcome! Enter your call on the Clusters page and press Connect.")
         viewModelScope.launch { pumpEvents() }
@@ -121,13 +122,14 @@ class BoardViewModel(app: Application) : AndroidViewModel(app) {
             var list = spots
             var changed = false
             var ev: Any? = first
-            while (ev != null) {
+            var n = 0
+            while (ev != null && n++ < 200) {   // keep the UI thread free
                 when (ev) {
                     is SpotEvent -> { list = merge(list, ev.index, ev.spot); changed = true }
                     is StateEvent -> status = status + (ev.index to ev.status)
                     is LogEvent -> log(ev.text, ev.error)
                 }
-                ev = events.tryReceive().getOrNull()
+                if (n < 200) ev = events.tryReceive().getOrNull()
             }
             if (changed) spots = list
             delay(300)
@@ -295,6 +297,7 @@ class BoardViewModel(app: Application) : AndroidViewModel(app) {
             jobs.clear()
             connected = false
             log("Disconnected.")
+            Diagnostics.breadcrumb(getApplication(), "Disconnect")
             return null
         }
         if (demo) {
@@ -311,6 +314,7 @@ class BoardViewModel(app: Application) : AndroidViewModel(app) {
             }
         }
         connected = true
+        Diagnostics.breadcrumb(getApplication(), "Connect (demo=$demo)")
         return null
     }
 
@@ -379,7 +383,10 @@ class BoardViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    fun diagnosticsReport(): String = Diagnostics.report(getApplication(), null, null)
+
     override fun onCleared() {
+        Diagnostics.breadcrumb(getApplication(), "BoardViewModel cleared")
         jobs.forEach { it.cancel() }
         super.onCleared()
     }

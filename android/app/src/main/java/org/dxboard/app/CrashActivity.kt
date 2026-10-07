@@ -26,7 +26,7 @@ class CrashActivity : Activity() {
         val pad = (16 * resources.displayMetrics.density).toInt()
 
         val title = TextView(this).apply {
-            text = "The app crashed last time 😕\nPlease tap Share and send this report."
+            text = "The app closed unexpectedly last time 😕\nPlease tap Share and send this report."
             setTextColor(Color.parseColor("#FFCC33"))
             textSize = 18f
             setTypeface(typeface, Typeface.BOLD)
