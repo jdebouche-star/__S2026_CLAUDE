@@ -12,7 +12,8 @@ class DxApp : Application() {
     override fun onCreate() {
         super.onCreate()
         CrashLog.install(this)
-        Diagnostics.breadcrumb(this, "--- app process started (${BuildConfig.VERSION_NAME}) ---")
+        val proc = if (android.os.Build.VERSION.SDK_INT >= 28) getProcessName() else "?"
+        Diagnostics.breadcrumb(this, "--- process started: $proc (${BuildConfig.VERSION_NAME}) ---")
     }
 }
 

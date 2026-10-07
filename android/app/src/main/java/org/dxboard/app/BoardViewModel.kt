@@ -177,7 +177,7 @@ class BoardViewModel(app: Application) : AndroidViewModel(app) {
     private fun country(call: String) = if (cty.size > 0) cty.find(call) ?: "" else ""
 
     fun log(text: String, error: Boolean = false) {
-        val line = (if (error) "⚠ " else "") + logTime.format(Date()) + "  " + text
+        val line = (if (error) "! " else "") + logTime.format(Date()) + "  " + text
         logs = (logs + line).takeLast(300)
         android.util.Log.i("DxBoard", line)
     }

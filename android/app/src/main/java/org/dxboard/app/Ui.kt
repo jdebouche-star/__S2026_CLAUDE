@@ -147,7 +147,7 @@ fun BoardApp(vm: BoardViewModel) {
         },
         bottomBar = {
             NavigationBar(containerColor = Panel) {
-                listOf("📡" to "Spots", "🛰" to "Clusters", "📜" to "Log").forEachIndexed { i, (icon, label) ->
+                listOf("◉" to "Spots", "≡" to "Clusters", "✎" to "Log").forEachIndexed { i, (icon, label) ->
                     NavigationBarItem(
                         selected = tab == i,
                         onClick = { tab = i },
@@ -279,7 +279,7 @@ fun SpotsScreen(vm: BoardViewModel, now: Long) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
             OutlinedTextField(
                 value = vm.search, onValueChange = { vm.search = it },
-                placeholder = { Text("🔍 Search call or country", color = Dim) },
+                placeholder = { Text("Search call or country", color = Dim) },
                 singleLine = true, modifier = Modifier.weight(1f),
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Characters),
                 colors = fieldColors(),
@@ -296,7 +296,7 @@ fun SpotsScreen(vm: BoardViewModel, now: Long) {
         if (visible.isEmpty()) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("📡", fontSize = 48.sp)
+                    Text("◉", fontSize = 48.sp, color = Accent)
                     Text(
                         when {
                             !vm.connected -> "Press Connect to receive spots"
@@ -542,7 +542,7 @@ fun LogScreen(vm: BoardViewModel) {
             Text(
                 line, fontFamily = FontFamily.Monospace, fontSize = 11.sp,
                 color = when {
-                    line.startsWith("⚠") -> Color(0xFFFF6B81)
+                    line.startsWith("!") -> Color(0xFFFF6B81)
                     "connected" in line || "loaded" in line -> Color(0xFF3DFF8C)
                     else -> Color(0xFFAAB4E0)
                 },

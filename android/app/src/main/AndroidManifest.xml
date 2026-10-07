@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -11,6 +12,21 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.DxBoard">
+        <!-- Do not auto-start the emoji font loader and the profile installer
+             (androidx.startup) when the app opens. -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+                tools:node="remove" />
+            <meta-data
+                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+                tools:node="remove" />
+        </provider>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -23,6 +39,7 @@
         <activity
             android:name=".ReportActivity"
             android:exported="true"
+            android:process=":report"
             android:label="DX Board Report"
             android:taskAffinity="org.dxboard.app.report"
             android:theme="@android:style/Theme.Material.NoActionBar">
@@ -34,6 +51,7 @@
         <activity
             android:name=".CrashActivity"
             android:exported="false"
+            android:process=":report"
             android:theme="@android:style/Theme.Material.NoActionBar" />
     </application>
 </manifest>
