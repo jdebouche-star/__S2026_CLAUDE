@@ -1,0 +1,29 @@
+[package]
+name = "cwskimmer"
+version = "0.1.0"
+edition = "2021"
+description = "Multi-channel CW skimmer: Rust port of JvanKatwijk/cwskimmer's decoding engine with an egui interface"
+license = "GPL-2.0-or-later"
+
+[features]
+default = ["gui"]
+gui = ["dep:eframe"]
+
+[dependencies]
+rustfft = "6"
+hound = "3"
+rand = "0.8"
+eframe = { version = "0.31", optional = true }
+
+[[bin]]
+name = "cwskimmer"
+path = "src/bin/cwskimmer.rs"
+required-features = ["gui"]
+
+[[bin]]
+name = "cwdecode"
+path = "src/bin/cwdecode.rs"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
