@@ -2,6 +2,7 @@
 name = "cwskimmer"
 version = "0.1.0"
 edition = "2021"
+default-run = "cwskimmer"
 description = "Multi-channel CW skimmer: Rust port of JvanKatwijk/cwskimmer's decoding engine with an egui interface"
 license = "GPL-2.0-or-later"
 
